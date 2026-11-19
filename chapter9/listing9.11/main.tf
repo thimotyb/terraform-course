@@ -1,5 +1,5 @@
 provider "aws" {
-  region  = "us-west-2"
+  region = "us-west-2"
 }
 
 resource "tls_private_key" "key" {
@@ -68,6 +68,7 @@ resource "aws_instance" "ansible_server" {
   }
 
   provisioner "remote-exec" {
+
     inline = [
       "sudo apt update -y",
       "sudo apt install -y software-properties-common",
@@ -82,16 +83,16 @@ resource "aws_instance" "ansible_server" {
       private_key = tls_private_key.key.private_key_pem
     }
   }
-  
+
   provisioner "local-exec" {
-    command = "ansible-playbook -u ubuntu --key-file ansible-key.pem -T 300 -i '${self.public_ip},', app.yml" 
+    command = "ansible-playbook -u ubuntu --key-file ansible-key.pem -T 300 -i '${self.public_ip},', app.yml"
   }
 }
 
 output "public_ip" {
- value = aws_instance.ansible_server.public_ip
+  value = aws_instance.ansible_server.public_ip
 }
 
 output "ansible_command" {
-    value = "ansible-playbook -u ubuntu --key-file ansible-key.pem -T 300 -i '${aws_instance.ansible_server.public_ip},', app.yml"
+  value = "ansible-playbook -u ubuntu --key-file ansible-key.pem -T 300 -i '${aws_instance.ansible_server.public_ip},', app.yml"
 }
